@@ -1,4 +1,8 @@
+using System;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows.Markup;
+using EnvDTE;
 using RudeBuild;
 
 namespace RudeBuildVSShared
@@ -47,11 +51,22 @@ namespace RudeBuildVSShared
 			return _outputPane != null;
 		}
 
-		public void WriteLine(string line)
-		{
-            if (Initialize())
-                _outputPane.OutputString(line + "\r\n");
-		}
+        private static readonly Regex WarningsRegex = new Regex(@"^.*([A-Za-z]:.+)\((\d+)(?:,\d+)?\): (warning .+)$", RegexOptions.Compiled);
+        private static readonly Regex ErrorsRegex   = new Regex(@"^.*([A-Za-z]:.+)\((\d+)(?:,\d+)?\): ((?:fatal )?error .+)$", RegexOptions.Compiled);
+        public void WriteLine(string line)
+        {
+            if (!Initialize() || line == null)
+                return;
+
+            line += "\r\n";
+            Match match = WarningsRegex.Match(line);
+            if (match.Success)
+                _outputPane.OutputTaskItemString(line, vsTaskPriority.vsTaskPriorityMedium, null, vsTaskIcon.vsTaskIconComment, match.Groups[1].Value, int.Parse(match.Groups[2].Value), match.Groups[3].Value);
+            else if ((match = ErrorsRegex.Match(line)).Success)
+                _outputPane.OutputTaskItemString(line, vsTaskPriority.vsTaskPriorityHigh, null, vsTaskIcon.vsTaskIconCompile, match.Groups[1].Value, int.Parse(match.Groups[2].Value), match.Groups[3].Value);
+            else
+                _outputPane.OutputString(line);
+        }
 
         public void WriteLine()
         {
