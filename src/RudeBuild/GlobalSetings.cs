@@ -13,7 +13,9 @@ namespace RudeBuild
         [DisplayValue("IncrediBuild")]
         IncrediBuild,
         [DisplayValue("SN-DBS")]
-        SN_DBS
+        SN_DBS,
+        [DisplayValue("MSBuild")]
+        MsBuild
     }
 
     public sealed class GlobalSettings

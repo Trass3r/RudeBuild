@@ -225,6 +225,60 @@ namespace RudeBuild
             return true;
         }
 
+         private static string GetMsBuildPath()
+         {
+             return @"C:\Program Files (x86)\MSBuild\14.0\bin\MSBuild.exe";
+         }
+
+        private bool TryToSetupMsBuildProcessObject(SolutionInfo solutionInfo, ref ProcessStartInfo info)
+        {
+            try
+            {
+                info.FileName = GetMsBuildPath();
+                if (string.IsNullOrEmpty(info.FileName))
+                {
+                    _settings.Output.WriteLine(
+                        "Warning: RudeBuild is setup to use MSBuild, but MSBuild could not be found.\n" +
+                        "Falling back to using a regular Visual Studio build.\n" +
+                        "Error: Couldn't find MSBuild command-line tool: " + info.FileName);
+                    return false;
+                }
+
+                string buildCommand = "Build";
+                if (_settings.BuildOptions.Clean)
+                    buildCommand = "Clean";
+                else if (_settings.BuildOptions.Rebuild)
+                    buildCommand = "Rebuild";
+
+                string target = _settings.ModifyFileName(solutionInfo.FilePath);
+                string[] buildConfig = _settings.BuildOptions.Config.Split('|');
+                if (!string.IsNullOrEmpty(_settings.BuildOptions.Project))
+                {
+                    ProjectInfo projectInfo = solutionInfo.GetProjectInfo(_settings.BuildOptions.Project);
+                    if (projectInfo != null)
+                    {
+                        string projectConfigName;
+                        SolutionConfigManager.ProjectConfig projectConfig = solutionInfo.ConfigManager.GetProjectByFileName(projectInfo.FileName);
+                        if (projectConfig.SolutionToProjectConfigMap.TryGetValue(_settings.BuildOptions.Config, out projectConfigName))
+                        {
+                            target = _settings.ModifyFileName(Path.GetFullPath(projectInfo.FileName));
+                            buildConfig = projectConfigName.Split('|');
+                        }
+                    }
+                }
+                info.Arguments = $"/nodeReuse:false /m /t:{buildCommand} /p:Configuration=\"{buildConfig[0]}\" /p:Platform=\"{buildConfig[1]}\" \"{target}\"";
+            }
+            catch (Exception ex)
+            {
+                _settings.Output.WriteLine(
+                    "Warning: RudeBuild is setup to use MSBuild, but MSBuild doesn't seem to be installed properly.\n" +
+                    "Falling back to using a regular Visual Studio build.\n" +
+                    "Error: " + ex.Message);
+                return false;
+            }
+            return true;
+        }
+
         private Process CreateProcessObject(SolutionInfo solutionInfo)
         {
             var process = new Process();
@@ -242,6 +296,8 @@ namespace RudeBuild
             if (_settings.GlobalSettings.BuildTool == BuildTool.IncrediBuild && TryToSetupIncrediBuildProcessObject(solutionInfo, ref info))
                 useDevEnvBuildTool = false;
             else if (_settings.GlobalSettings.BuildTool == BuildTool.SN_DBS && TryToSetupSnVsBuildProcessObject(solutionInfo, ref info))
+                useDevEnvBuildTool = false;
+            else if (_settings.GlobalSettings.BuildTool == BuildTool.MsBuild && TryToSetupMsBuildProcessObject(solutionInfo, ref info))
                 useDevEnvBuildTool = false;
 
             if (useDevEnvBuildTool)
