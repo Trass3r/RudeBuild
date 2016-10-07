@@ -61,6 +61,20 @@ namespace RudeBuild
             }
         }
 
+        private string _intDirSuffix;
+        [DefaultValue("")]
+        public string IntDirSuffix
+        {
+            get { return _intDirSuffix; }
+            set
+            {
+                char[] invalidChars = Path.GetInvalidPathChars();
+                if (-1 != value.IndexOfAny(invalidChars))
+                    throw new ArgumentException("The directory suffix contains invalid characters for directories.");
+                _intDirSuffix = value;
+            }
+        }
+
         private long _maxUnityFileSizeInBytes;
         [DefaultValue(300 * 1024)]
         public long MaxUnityFileSizeInBytes

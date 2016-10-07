@@ -251,6 +251,16 @@ namespace RudeBuild
             return result;
         }
 
+        private void SetIntDir(XNamespace ns, XElement projectElement, string suffix)
+        {
+            var intDirElements = from itemGroupElement in projectElement.Elements(ns + "PropertyGroup")
+                                 from intDirElement in itemGroupElement.Elements(ns + "IntDir")
+                                 select intDirElement;
+
+            foreach (XElement el in intDirElements)
+                el.Value = el.Value.TrimEnd('/', '\\') + suffix + "\\";
+        }
+
         private static void AddExcludedFromBuild(XNamespace ns, XElement element)
         {
             XName excludedName = ns + "ExcludedFromBuild";
@@ -355,6 +365,11 @@ namespace RudeBuild
                 if (_settings.SolutionSettings.SetBigObjCompilerFlag)
                 {
                     SetBigObjCompilerFlag(projectDocument, ns);
+                }
+
+                if (!string.IsNullOrEmpty(_settings.GlobalSettings.IntDirSuffix))
+                {
+                    SetIntDir(ns, projectElement, _settings.GlobalSettings.IntDirSuffix);
                 }
 
                 FixupProjectReferences(projectDocument, ns, _settings);
