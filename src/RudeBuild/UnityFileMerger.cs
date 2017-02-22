@@ -130,15 +130,14 @@ namespace RudeBuild
             {
                 string expandedCppFileName = ProjectInfo.ExpandEnvironmentVariables(cppFileName);
                 string cppFilePath = Path.IsPathRooted(expandedCppFileName) ? expandedCppFileName : Path.GetFullPath(Path.Combine(Path.GetDirectoryName(projectInfo.FileName), cppFileName));
-                if (!File.Exists(cppFilePath))
+                FileInfo fileInfo = null;
+                if (File.Exists(cppFilePath))
                 {
-                    _settings.Output.WriteLine("Input file '" + cppFilePath + "' does not exist. Skipping.");
-                    continue;
+                    fileInfo = new FileInfo(cppFilePath);
+                    if (_settings.GlobalSettings.ExcludeWritableFilesFromUnityMerge && !fileInfo.IsReadOnly)
+                        continue;
                 }
 
-                var fileInfo = new FileInfo(cppFilePath);
-                if (_settings.GlobalSettings.ExcludeWritableFilesFromUnityMerge && !fileInfo.IsReadOnly)
-                    continue;
                 if (_settings.SolutionSettings.IsExcludedCppFileNameForProject(projectInfo, cppFileName))
                     continue;
 
@@ -163,7 +162,7 @@ namespace RudeBuild
                     WritePrefix(projectInfo, unityFile.Contents);
                 }
 
-                unityFile.TotalMergedSizeInBytes += fileInfo.Length;
+                unityFile.TotalMergedSizeInBytes += fileInfo?.Length ?? 0;
                 unityFile.Contents.AppendLine("#ifdef RUDE_BUILD_SUPPORTS_PRAGMA_MESSAGE");
                 unityFile.Contents.AppendLine("#pragma message(\"" + Path.GetFileName(cppFileName) + "\")");
                 unityFile.Contents.AppendLine("#endif");
