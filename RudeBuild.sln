@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 15.0.26430.16
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RudeBuildConsole", "RudeBuildConsole.csproj", "{7DC0315A-DBD6-4790-94EC-4526A8B9300B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RudeBuildConsole", "src\RudeBuildConsole\RudeBuildConsole.csproj", "{7DC0315A-DBD6-4790-94EC-4526A8B9300B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RudeBuild", "RudeBuild.csproj", "{344A8E8A-9F1B-45F8-B03D-03CE5534572D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RudeBuild", "src\RudeBuild\RudeBuild.csproj", "{344A8E8A-9F1B-45F8-B03D-03CE5534572D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RudeBuildVSIX", "RudeBuildVSIX.csproj", "{4868C849-9124-434B-BC83-B43570436771}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RudeBuildVSIX", "src\RudeBuildVSIX\RudeBuildVSIX.csproj", "{4868C849-9124-434B-BC83-B43570436771}"
 	ProjectSection(ProjectDependencies) = postProject
 		{725D4418-B658-489E-BE5B-CA0F147A0496} = {725D4418-B658-489E-BE5B-CA0F147A0496}
 		{344A8E8A-9F1B-45F8-B03D-03CE5534572D} = {344A8E8A-9F1B-45F8-B03D-03CE5534572D}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RudeBuildVSShared", "RudeBuildVSShared.csproj", "{725D4418-B658-489E-BE5B-CA0F147A0496}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RudeBuildVSShared", "src\RudeBuildVSShared\RudeBuildVSShared.csproj", "{725D4418-B658-489E-BE5B-CA0F147A0496}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

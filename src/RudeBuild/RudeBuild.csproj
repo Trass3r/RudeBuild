@@ -3,22 +3,19 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{344A8E8A-9F1B-45F8-B03D-03CE5534572D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RudeBuild</RootNamespace>
     <AssemblyName>RudeBuild</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <IntermediateOutputPath>$(SolutionDir)\obj\$(Configuration)\</IntermediateOutputPath>
+    <OutputPath>$(SolutionDir)\bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +24,6 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -38,12 +34,12 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\src\Key.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\Key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommandLineParser, Version=2.6.0.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\external\CommandLineParser\bin\Release\CommandLineParser.dll</HintPath>
+      <HintPath>$(SolutionDir)\external\CommandLineParser\bin\Release\CommandLineParser.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -53,62 +49,57 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\src\RudeBuild\BuildOptions.cs">
+    <Compile Include="BuildOptions.cs">
       <Link>BuildOptions.cs</Link>
     </Compile>
-    <Compile Include="..\src\RudeBuild\CacheCleaner.cs">
+    <Compile Include="CacheCleaner.cs">
       <Link>CacheCleaner.cs</Link>
     </Compile>
-    <Compile Include="..\src\RudeBuild\DisplayValueAttribute.cs">
+    <Compile Include="DisplayValueAttribute.cs">
       <Link>DisplayValueAttribute.cs</Link>
     </Compile>
-    <Compile Include="..\src\RudeBuild\GlobalSetings.cs">
+    <Compile Include="GlobalSetings.cs">
       <Link>GlobalSetings.cs</Link>
     </Compile>
-    <Compile Include="..\src\RudeBuild\IOutput.cs">
+    <Compile Include="IOutput.cs">
       <Link>IOutput.cs</Link>
     </Compile>
-    <Compile Include="..\src\RudeBuild\ModifiedTextFileWriter.cs">
+    <Compile Include="ModifiedTextFileWriter.cs">
       <Link>ModifiedTextFileWriter.cs</Link>
     </Compile>
-    <Compile Include="..\src\RudeBuild\ProcessLauncher.cs">
+    <Compile Include="ProcessLauncher.cs">
       <Link>ProcessLauncher.cs</Link>
     </Compile>
-    <Compile Include="..\src\RudeBuild\ProjectInfo.cs" />
-    <Compile Include="..\src\RudeBuild\AssemblyInfo.cs" />
-    <Compile Include="..\src\RudeBuild\ProjectReaderWriter.cs">
+    <Compile Include="ProjectInfo.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="ProjectReaderWriter.cs">
       <Link>ProjectReaderWriter.cs</Link>
     </Compile>
-    <Compile Include="..\src\RudeBuild\SerializableDictionary.cs">
+    <Compile Include="SerializableDictionary.cs">
       <Link>SerializableDictionary.cs</Link>
     </Compile>
-    <Compile Include="..\src\RudeBuild\Settings.cs">
+    <Compile Include="Settings.cs">
       <Link>Settings.cs</Link>
     </Compile>
-    <Compile Include="..\src\RudeBuild\SolutionInfo.cs">
+    <Compile Include="SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="..\src\RudeBuild\SolutionReaderWriter.cs">
+    <Compile Include="SolutionReaderWriter.cs">
       <Link>SolutionReaderWriter.cs</Link>
     </Compile>
-    <Compile Include="..\src\RudeBuild\SolutionSettings.cs">
+    <Compile Include="SolutionSettings.cs">
       <Link>SolutionSettings.cs</Link>
     </Compile>
-    <Compile Include="..\src\RudeBuild\UnityFileMerger.cs">
+    <Compile Include="UnityFileMerger.cs">
       <Link>UnityFileMerger.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\LICENSE.rtf" />
-    <Content Include="..\LICENSE.txt" />
-    <Content Include="..\README.txt" />
+    <Content Include="$(SolutionDir)\LICENSE.rtf" />
+    <Content Include="$(SolutionDir)\LICENSE.txt" />
+    <Content Include="$(SolutionDir)\README.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>copy "$(ProjectDir)..\LICENSE.rtf" "$(ProjectDir)$(OutDir)"
-copy "$(ProjectDir)..\LICENSE.txt" "$(ProjectDir)$(OutDir)"
-copy "$(ProjectDir)..\README.txt" "$(ProjectDir)$(OutDir)"</PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
