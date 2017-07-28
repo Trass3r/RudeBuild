@@ -17,7 +17,7 @@ namespace RudeBuild
             _settings = settings;
         }
 
-        public static string GetDevEvnBaseRegistryKey(VisualStudioVersion version)
+        private static string GetDevEvnBaseRegistryKey(VisualStudioVersion version)
         {
             //TODO: This hack gets us the right registry path for 32-bit software on 64 bit Windows.
             // The right fix is to either build an x86 target (rather than "Any CPU"), or to build
@@ -28,25 +28,28 @@ namespace RudeBuild
 
             switch (version)
             {
-                case VisualStudioVersion.VS2005: return registrySoftwarePath + @"\Microsoft\VisualStudio\8.0\";
-                case VisualStudioVersion.VS2008: return registrySoftwarePath + @"\Microsoft\VisualStudio\9.0\";
-                case VisualStudioVersion.VS2010: return registrySoftwarePath + @"\Microsoft\VisualStudio\10.0\";
-                case VisualStudioVersion.VS2012: return registrySoftwarePath + @"\Microsoft\VisualStudio\11.0\";
-                case VisualStudioVersion.VS2013: return registrySoftwarePath + @"\Microsoft\VisualStudio\12.0\";
-                case VisualStudioVersion.VS2015: return registrySoftwarePath + @"\Microsoft\VisualStudio\14.0\";
+                case VisualStudioVersion.VS2005: return registrySoftwarePath + @"\Microsoft\VisualStudio\8.0\Setup\VS";
+                case VisualStudioVersion.VS2008: return registrySoftwarePath + @"\Microsoft\VisualStudio\9.0\Setup\VS";
+                case VisualStudioVersion.VS2010: return registrySoftwarePath + @"\Microsoft\VisualStudio\10.0\Setup\VS";
+                case VisualStudioVersion.VS2012: return registrySoftwarePath + @"\Microsoft\VisualStudio\11.0\Setup\VS";
+                case VisualStudioVersion.VS2013: return registrySoftwarePath + @"\Microsoft\VisualStudio\12.0\Setup\VS";
+                case VisualStudioVersion.VS2015: return registrySoftwarePath + @"\Microsoft\VisualStudio\14.0\Setup\VS";
+                case VisualStudioVersion.VS2017: return registrySoftwarePath + @"\Microsoft\VisualStudio\SxS\VS7";
                 default: throw new ArgumentException("Couldn't determine Visual Studio registry key. Your version of Visual Studio is unsupported by this tool.");
             }
         }
 
-		public static string GetDevEnvDir(VisualStudioVersion version)
+		private static string GetDevEnvDir(VisualStudioVersion version)
 		{
-			string registryPath = GetDevEvnBaseRegistryKey(version) + @"Setup\VS";
+			string registryPath = GetDevEvnBaseRegistryKey(version);
 			RegistryKey registryKey = Registry.LocalMachine.OpenSubKey(registryPath);
 			if (null == registryKey)
 				throw new ArgumentException("Couldn't open Visual Studio registry key. Your version of Visual Studio is unsupported by this tool or Visual Studio is not installed properly.");
 
-			var devEnvDir = (string)registryKey.GetValue("EnvironmentDirectory");
-			return devEnvDir;
+			if (version < VisualStudioVersion.VS2017)
+				return (string) registryKey.GetValue("EnvironmentDirectory");
+
+			return Path.Combine((string) registryKey.GetValue("15.0"), "Common7\\IDE");
 		}
 
 		public static string GetDevEnvPath(VisualStudioVersion version)
@@ -225,10 +228,11 @@ namespace RudeBuild
             return true;
         }
 
-         private static string GetMsBuildPath()
-         {
-             return @"C:\Program Files (x86)\MSBuild\14.0\bin\MSBuild.exe";
-         }
+        private static string GetMsBuildPath()
+        {
+            string newPath = Path.Combine(GetDevEnvDir(VisualStudioVersion.VS2017), @"..\..\MSBuild\15.0\Bin\MSBuild.exe");
+            return File.Exists(newPath) ? newPath : @"C:\Program Files (x86)\MSBuild\14.0\bin\MSBuild.exe";
+        }
 
         private bool TryToSetupMsBuildProcessObject(SolutionInfo solutionInfo, ref ProcessStartInfo info)
         {
