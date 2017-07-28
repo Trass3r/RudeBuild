@@ -6,7 +6,6 @@
     <Description xml:space="preserve">RudeBuild - A bulk/unity C++ build tool for Visual Studio</Description>
     <MoreInfo>https://github.com/Trass3r/rudebuild</MoreInfo>
     <License>LICENSE.rtf</License>
-    <Icon>RudeBuildPackage.ico</Icon>
     <Tags>build,c++,unity,bulk</Tags>
   </Metadata>
   <Installation>
